@@ -1,6 +1,8 @@
 package com.goeuro;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
@@ -28,7 +30,7 @@ public class RestCaller {
 	private String url;
 	
 	public RestCaller(String city) {
-		this.url = String.format(URL_PATTERN, city);
+		this.url = getUrl(city);
 		logger.info("Api url is: " + url);
 	}
 	
@@ -42,6 +44,14 @@ public class RestCaller {
 			return jsonString;
 		} catch (IOException e) {
 			throw new ClientException(Messages.URL_ACCESS_PROBLEM, e, url);
+		}
+	}
+	
+	private String getUrl(String city) {
+		try {
+			return String.format(URL_PATTERN, URLEncoder.encode(city, "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			throw new ClientException(Messages.PROBLEM_OCCURED, e);
 		}
 	}
 	
